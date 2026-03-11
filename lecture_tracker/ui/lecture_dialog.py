@@ -29,12 +29,16 @@ class LectureDialog(QDialog):
         self.day_combo.addItems(DAYS)
 
         self.start_spin = QSpinBox()
-        self.start_spin.setRange(1, max_hours)
+        self.start_spin.setMinimum(1)
+        self.start_spin.setMaximum(max_hours)
         self.start_spin.setValue(1)
+        self.start_spin.setFixedWidth(80)
 
         self.duration_spin = QSpinBox()
-        self.duration_spin.setRange(1, max_hours)
+        self.duration_spin.setMinimum(1)
+        self.duration_spin.setMaximum(max_hours)
         self.duration_spin.setValue(1)
+        self.duration_spin.setFixedWidth(80)
 
         form = QFormLayout()
         form.addRow("שם הקורס", self.course_input)
@@ -53,18 +57,24 @@ class LectureDialog(QDialog):
         self.setLayout(layout)
 
     def _save(self) -> None:
+        self.result_data = None
         course = self.course_input.text().strip()
         title = self.title_input.text().strip()
 
         if not course:
-            QMessageBox.critical(self, "שגיאה", "יש למלא שם קורס")
+            QMessageBox.warning(self, "שגיאה", "יש למלא שם קורס")
             return
 
         start_hour = self.start_spin.value()
         duration = self.duration_spin.value()
+
+        if not isinstance(duration, int) or duration <= 0:
+            QMessageBox.warning(self, "שגיאה", "משך ההרצאה חייב להיות לפחות שעה אחת")
+            return
+
         max_hours = self.start_spin.maximum()
         if start_hour + duration - 1 > max_hours:
-            QMessageBox.critical(self, "שגיאה", "משך ההרצאה חורג מטווח השעות")
+            QMessageBox.warning(self, "שגיאה", "משך ההרצאה חורג מטווח השעות")
             return
 
         self.result_data = {

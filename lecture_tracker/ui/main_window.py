@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
-from PySide6.QtWidgets import QMainWindow, QMessageBox, QWidget, QVBoxLayout, QLabel
+from PySide6.QtWidgets import QDialog, QMainWindow, QMessageBox, QWidget, QVBoxLayout, QLabel
 
 from lecture_tracker.storage.json_storage import JsonStorage
 from lecture_tracker.ui.calendar_grid import CalendarGrid
@@ -41,7 +41,7 @@ class MainWindow(QMainWindow):
 
     def _add_lecture(self) -> None:
         dialog = LectureDialog(max_hours=13, parent=self)
-        if dialog.exec() != dialog.Accepted or not dialog.result_data:
+        if dialog.exec() != QDialog.DialogCode.Accepted or not dialog.result_data:
             return
 
         lecture = dialog.result_data

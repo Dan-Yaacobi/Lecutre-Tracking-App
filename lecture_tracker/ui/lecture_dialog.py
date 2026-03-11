@@ -1,76 +1,79 @@
-import tkinter as tk
-from tkinter import ttk, messagebox
+from __future__ import annotations
+
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QComboBox,
+    QDialog,
+    QDialogButtonBox,
+    QFormLayout,
+    QLineEdit,
+    QMessageBox,
+    QSpinBox,
+    QVBoxLayout,
+)
+
+DAYS = ["א", "ב", "ג", "ד", "ה"]
 
 
-class LectureDialog(tk.Toplevel):
-    def __init__(self, parent: tk.Widget, max_hours: int) -> None:
+class LectureDialog(QDialog):
+    def __init__(self, max_hours: int, parent=None) -> None:
         super().__init__(parent)
-        self.title("הוסף הרצאה")
-        self.resizable(False, False)
-        self.result = None
-        self.max_hours = max_hours
+        self.setWindowTitle("הוספת הרצאה")
+        self.setLayoutDirection(Qt.RightToLeft)
+        self.result_data: dict | None = None
 
-        self.course_var = tk.StringVar()
-        self.title_var = tk.StringVar()
-        self.day_var = tk.StringVar(value="א")
-        self.start_var = tk.StringVar(value="1")
-        self.duration_var = tk.StringVar(value="1")
+        self.course_input = QLineEdit()
+        self.title_input = QLineEdit()
 
-        self._build_ui()
-        self.transient(parent)
-        self.grab_set()
-        self.focus()
+        self.day_combo = QComboBox()
+        self.day_combo.addItems(DAYS)
 
-    def _build_ui(self) -> None:
-        frame = ttk.Frame(self, padding=12)
-        frame.grid(row=0, column=0, sticky="nsew")
+        self.start_spin = QSpinBox()
+        self.start_spin.setRange(1, max_hours)
+        self.start_spin.setValue(1)
 
-        ttk.Label(frame, text="שם הקורס").grid(row=0, column=0, sticky="e", pady=4)
-        ttk.Entry(frame, textvariable=self.course_var, width=30).grid(row=0, column=1, pady=4)
+        self.duration_spin = QSpinBox()
+        self.duration_spin.setRange(1, max_hours)
+        self.duration_spin.setValue(1)
 
-        ttk.Label(frame, text="כותרת ההרצאה").grid(row=1, column=0, sticky="e", pady=4)
-        ttk.Entry(frame, textvariable=self.title_var, width=30).grid(row=1, column=1, pady=4)
+        form = QFormLayout()
+        form.addRow("שם הקורס", self.course_input)
+        form.addRow("כותרת ההרצאה (אופציונלי)", self.title_input)
+        form.addRow("יום", self.day_combo)
+        form.addRow("שעת התחלה", self.start_spin)
+        form.addRow("משך (שעות אקדמיות)", self.duration_spin)
 
-        ttk.Label(frame, text="יום בשבוע").grid(row=2, column=0, sticky="e", pady=4)
-        ttk.Combobox(frame, textvariable=self.day_var, values=["א", "ב", "ג", "ד", "ה"], state="readonly", width=27).grid(row=2, column=1, pady=4)
+        buttons = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self._save)
+        buttons.rejected.connect(self.reject)
 
-        ttk.Label(frame, text="שעת התחלה").grid(row=3, column=0, sticky="e", pady=4)
-        ttk.Spinbox(frame, from_=1, to=self.max_hours, textvariable=self.start_var, width=28).grid(row=3, column=1, pady=4)
-
-        ttk.Label(frame, text="משך ההרצאה (שעות אקדמיות)").grid(row=4, column=0, sticky="e", pady=4)
-        ttk.Spinbox(frame, from_=1, to=self.max_hours, textvariable=self.duration_var, width=28).grid(row=4, column=1, pady=4)
-
-        buttons = ttk.Frame(frame)
-        buttons.grid(row=5, column=0, columnspan=2, pady=(10, 0))
-        ttk.Button(buttons, text="ביטול", command=self.destroy).grid(row=0, column=0, padx=4)
-        ttk.Button(buttons, text="שמור", command=self._save).grid(row=0, column=1, padx=4)
+        layout = QVBoxLayout()
+        layout.addLayout(form)
+        layout.addWidget(buttons)
+        self.setLayout(layout)
 
     def _save(self) -> None:
-        course = self.course_var.get().strip()
-        title = self.title_var.get().strip()
+        course = self.course_input.text().strip()
+        title = self.title_input.text().strip()
 
-        if not course or not title:
-            messagebox.showerror("שגיאה", "יש למלא שם קורס וכותרת הרצאה")
+        if not course:
+            QMessageBox.critical(self, "שגיאה", "יש למלא שם קורס")
             return
 
-        try:
-            start_hour = int(self.start_var.get())
-            duration_hours = int(self.duration_var.get())
-        except ValueError:
-            messagebox.showerror("שגיאה", "יש להזין ערכים מספריים תקינים")
+        start_hour = self.start_spin.value()
+        duration = self.duration_spin.value()
+        max_hours = self.start_spin.maximum()
+        if start_hour + duration - 1 > max_hours:
+            QMessageBox.critical(self, "שגיאה", "משך ההרצאה חורג מטווח השעות")
             return
 
-        if start_hour < 1 or duration_hours < 1 or start_hour + duration_hours - 1 > self.max_hours:
-            messagebox.showerror("שגיאה", "משך ההרצאה חורג מגבולות המערכת")
-            return
-
-        self.result = {
+        self.result_data = {
             "course": course,
             "title": title,
-            "day": self.day_var.get(),
+            "day": self.day_combo.currentText(),
             "start_hour": start_hour,
-            "duration_hours": duration_hours,
-            "completed": False,
+            "duration_hours": duration,
+            "hours": [{"completed": False} for _ in range(duration)],
             "focus_rating": None,
         }
-        self.destroy()
+        self.accept()

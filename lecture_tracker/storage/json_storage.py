@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from lecture_tracker.models import LectureModel
+
 
 class JsonStorage:
     def __init__(self, data_file: Path) -> None:
@@ -13,12 +15,16 @@ class JsonStorage:
 
         try:
             with self.data_file.open("r", encoding="utf-8") as file:
-                data = json.load(file)
-                if "lectures" not in data or not isinstance(data["lectures"], list):
-                    return {"lectures": []}
-                return data
+                raw = json.load(file)
         except (json.JSONDecodeError, OSError):
             return {"lectures": []}
+
+        lectures = raw.get("lectures", []) if isinstance(raw, dict) else []
+        if not isinstance(lectures, list):
+            return {"lectures": []}
+
+        normalized = [LectureModel.from_dict(item).to_dict() for item in lectures if isinstance(item, dict)]
+        return {"lectures": normalized}
 
     def save(self, data: dict[str, Any]) -> None:
         self.data_file.parent.mkdir(parents=True, exist_ok=True)

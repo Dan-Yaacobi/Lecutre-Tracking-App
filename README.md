@@ -16,6 +16,8 @@
 
 ## הרצה
 ```bash
+python -m lecture_tracker.main
+# או לחלופין:
 python lecture_tracker/main.py
 ```
 

@@ -1,6 +1,11 @@
 from pathlib import Path
+import sys
 import tkinter as tk
 from tkinter import messagebox
+
+if __package__ in (None, ""):
+    # Allow running the file directly: `python lecture_tracker/main.py`
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from lecture_tracker.storage.json_storage import JsonStorage
 from lecture_tracker.ui.calendar_view import CalendarView, DAY_TO_INDEX

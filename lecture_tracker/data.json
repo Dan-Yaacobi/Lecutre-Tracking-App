@@ -1,0 +1,13 @@
+{
+  "lectures": [
+    {
+      "course": "אלגברה לינארית",
+      "title": "מרחבים וקטוריים",
+      "day": "ב",
+      "start_hour": 3,
+      "duration_hours": 2,
+      "completed": false,
+      "focus_rating": null
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+:root {
+  --bg: #efefef;
+  --panel: #f7f7f7;
+  --line: #b2b2b2;
+  --blue: #5f9ad1;
+  --red: #ff6a4d;
+  --green: #2cf04f;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: #1f2732;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 20px;
+  min-height: 100vh;
+  padding: 18px;
+}
+
+.sidebar {
+  background: #ddd;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.top-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.btn {
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 700;
+  height: 36px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: linear-gradient(#0e84df, #0057b8);
+}
+
+.btn-ghost {
+  background: linear-gradient(#73c7d8, #2d9dc0);
+}
+
+.search {
+  width: 100%;
+  margin-top: 12px;
+  height: 38px;
+  border: 1px solid #b8b8b8;
+  border-radius: 5px;
+  font-size: 24px;
+  padding: 6px 10px;
+}
+
+.selected-courses {
+  margin-top: 12px;
+  background: #d8d8d8;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.selected-header {
+  padding: 10px;
+  font-weight: 700;
+  border-bottom: 1px solid #b9b9b9;
+  font-size: 34px;
+}
+
+.course {
+  padding: 12px;
+  margin: 8px;
+  border-radius: 7px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid #5a5a5a77;
+  font-size: 30px;
+}
+
+.course-code {
+  text-decoration: underline;
+}
+
+.course-red {
+  background: var(--red);
+}
+
+.course-green {
+  background: var(--green);
+}
+
+.course-blue {
+  background: var(--blue);
+}
+
+.schedule-wrapper h1 {
+  margin: 0 0 14px;
+  font-size: 40px;
+}
+
+.schedule-grid {
+  position: relative;
+  background: #ddd;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr) 84px;
+  grid-template-rows: 48px repeat(14, 68px);
+  overflow: hidden;
+}
+
+.header {
+  border-left: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  font-size: 32px;
+  font-weight: 700;
+  background: #c8dbe7;
+}
+
+.time-col {
+  grid-column: 7;
+  grid-row: 2 / span 14;
+  border-right: 1px solid var(--line);
+  background: #ececec;
+  display: grid;
+  grid-template-rows: repeat(14, 1fr);
+}
+
+.time-col span {
+  display: grid;
+  place-items: center;
+  border-bottom: 1px solid var(--line);
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.day-col {
+  grid-row: 2 / span 14;
+  border-left: 1px solid var(--line);
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 67px,
+      var(--line) 67px,
+      var(--line) 68px
+    );
+}
+
+.lesson {
+  position: absolute;
+  right: calc((var(--day) - 1) * ((100% - 84px) / 6));
+  top: calc(48px + var(--start) * 68px + 2px);
+  width: calc((100% - 84px) / 6 - 4px);
+  height: calc(var(--span) * 68px - 4px);
+  border-radius: 8px;
+  border: 1px solid #3f3f3f88;
+  padding: 10px;
+  font-size: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lesson small {
+  font-size: 24px;
+}
+
+@media (max-width: 1280px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+}

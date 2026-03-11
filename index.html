@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>מערכת שעות</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="top-actions">
+          <button class="btn btn-ghost">🛠️ מנהל מערכת</button>
+          <button class="btn btn-primary">+ בחירת קורסים</button>
+        </div>
+
+        <input class="search" placeholder="חיפוש קורס לפי שם או מספר" />
+
+        <section class="selected-courses">
+          <header class="selected-header">קורסים שנבחרו</header>
+          <article class="course course-red">
+            <span class="course-name">חשבון דיפרנציאלי ואינטגרלי א1</span>
+            <span class="course-code">(03661101)</span>
+          </article>
+          <article class="course course-green">
+            <span class="course-name">אלגברה ליניארית להנדסה מכנית</span>
+            <span class="course-code">(05091624)</span>
+          </article>
+          <article class="course course-blue">
+            <span class="course-name">אנליזה נומרית</span>
+            <span class="course-code">(03662105)</span>
+          </article>
+        </section>
+      </aside>
+
+      <section class="schedule-wrapper">
+        <h1>שעות: 18</h1>
+        <div class="schedule-grid">
+          <div class="header">ראשון</div>
+          <div class="header">שני</div>
+          <div class="header">שלישי</div>
+          <div class="header">רביעי</div>
+          <div class="header">חמישי</div>
+          <div class="header">שישי</div>
+
+          <div class="time-col">
+            <span>08:00</span><span>09:00</span><span>10:00</span><span>11:00</span>
+            <span>12:00</span><span>13:00</span><span>14:00</span><span>15:00</span>
+            <span>16:00</span><span>17:00</span><span>18:00</span><span>19:00</span>
+            <span>20:00</span><span>21:00</span>
+          </div>
+
+          <div class="day-col"></div>
+          <div class="day-col"></div>
+          <div class="day-col"></div>
+          <div class="day-col"></div>
+          <div class="day-col"></div>
+          <div class="day-col"></div>
+
+          <article class="lesson course-green" style="--day:1; --start:2; --span:2;">
+            <strong>02 - אלגברה ליניארית</strong>
+            <small>תרגיל | כיתה 206</small>
+          </article>
+
+          <article class="lesson course-green" style="--day:3; --start:0; --span:3;">
+            <strong>04 - אלגברה ליניארית</strong>
+            <small>שיעור | חדר 103</small>
+          </article>
+
+          <article class="lesson course-red" style="--day:4; --start:2; --span:1;">
+            <strong>04 - חשבון דיפרנציאלי</strong>
+            <small>תרגיל | בניין 222</small>
+          </article>
+
+          <article class="lesson course-red" style="--day:3; --start:6; --span:2;">
+            <strong>04 - חשבון דיפרנציאלי</strong>
+            <small>תרגיל | אולם 103</small>
+          </article>
+
+          <article class="lesson course-blue" style="--day:5; --start:5; --span:2;">
+            <strong>02 - אנליזה נומרית</strong>
+            <small>שיעור | חדר 101</small>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

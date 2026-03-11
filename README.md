@@ -1,24 +1,24 @@
-# מעקב השלמת הרצאות
+# מעקב השלמת הרצאות (PySide6)
 
-אפליקציית דסקטופ פשוטה (Tkinter + Python) לניהול השלמות הרצאות באופן מקומי וללא אינטרנט.
+אפליקציית דסקטופ מודרנית למעקב השלמות הרצאות בעברית עם ממשק Qt נקי, RTL ושמירה מקומית ב-JSON.
 
 ## יכולות מרכזיות
-- לוח שבועי בעברית לפי ימים א-ה ושעות אקדמיות.
-- כל תא מייצג שעה אקדמית אחת (45 דקות).
-- הרצאות יכולות להימשך מספר שעות אקדמיות רצופות.
-- סימון הרצאה כהושלמה/לא הושלמה.
-- דירוג ריכוז לכל הרצאה (1-3).
-- חישוב אוטומטי של זמן השלמה:
-  - זמן צפייה רגיל (1x)
-  - במהירות 1.5x
-  - במהירות 2x
-- שמירת נתונים אוטומטית לקובץ `lecture_tracker/data.json`.
+- ממשק מודרני מבוסס **PySide6 (Qt for Python)**.
+- לוח שבועי בעברית (א-ה) עם תצוגת שעות אמיתית: **08:00–20:00**.
+- כל שורה מייצגת שעה אקדמית אחת (45 דקות).
+- תמיכה בהרצאות רב-שעתיות עם **סימון השלמה לכל שעה בנפרד**.
+- כותרת הרצאה היא **אופציונלית**.
+- דירוג ריכוז (1–3) לכל הרצאה.
+- חישובי זמן השלמה אוטומטיים:
+  - רגיל (1x)
+  - 1.5x
+  - 2x
+- שמירה אוטומטית בקובץ `lecture_tracker/data.json`.
 
-## הרצה
+## התקנה והרצה
 ```bash
-python -m lecture_tracker.main
-# או לחלופין:
-python lecture_tracker/main.py
+pip install -r requirements.txt
+python main.py
 ```
 
 ## מבנה הפרויקט
@@ -26,11 +26,16 @@ python lecture_tracker/main.py
 lecture_tracker/
     main.py
     ui/
-        calendar_view.py
+        main_window.py
+        calendar_grid.py
         lecture_dialog.py
     logic/
         time_calculator.py
     storage/
         json_storage.py
+    models/
+        lecture_model.py
     data.json
+main.py
+requirements.txt
 ```

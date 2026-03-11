@@ -1,85 +1,72 @@
-from pathlib import Path
 import sys
-import tkinter as tk
-from tkinter import messagebox
 
-if __package__ in (None, ""):
-    # Allow running the file directly: `python lecture_tracker/main.py`
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication
 
-from lecture_tracker.storage.json_storage import JsonStorage
-from lecture_tracker.ui.calendar_view import CalendarView, DAY_TO_INDEX
-from lecture_tracker.ui.lecture_dialog import LectureDialog
-
-TOTAL_ACADEMIC_HOURS = 10
+from lecture_tracker.ui.main_window import MainWindow
 
 
-class LectureTrackerApp:
-    def __init__(self, root: tk.Tk) -> None:
-        self.root = root
-        self.root.title("מעקב השלמת הרצאות")
-        self.root.geometry("1200x700")
-
-        self.storage = JsonStorage(Path(__file__).resolve().parent / "data.json")
-        self.data = self.storage.load()
-
-        self.calendar = CalendarView(
-            root,
-            total_hours=TOTAL_ACADEMIC_HOURS,
-            on_add=self.add_lecture,
-            on_update=self.update_lecture,
-            on_delete=self.delete_lecture,
-        )
-        self.calendar.pack(fill="both", expand=True)
-        self.calendar.set_lectures(self.data["lectures"])
-
-    def add_lecture(self) -> None:
-        dialog = LectureDialog(self.root, max_hours=TOTAL_ACADEMIC_HOURS)
-        self.root.wait_window(dialog)
-        lecture = dialog.result
-        if not lecture:
-            return
-
-        if self._has_overlap(lecture):
-            messagebox.showerror("שגיאה", "יש חפיפה עם הרצאה קיימת באותו יום")
-            return
-
-        self.data["lectures"].append(lecture)
-        self._save_and_refresh()
-
-    def update_lecture(self, lecture_index: int, updated_lecture: dict) -> None:
-        self.data["lectures"][lecture_index] = updated_lecture
-        self._save_and_refresh()
-
-    def delete_lecture(self, lecture_index: int) -> None:
-        del self.data["lectures"][lecture_index]
-        self._save_and_refresh()
-
-    def _save_and_refresh(self) -> None:
-        self.storage.save(self.data)
-        self.calendar.set_lectures(self.data["lectures"])
-
-    def _has_overlap(self, new_lecture: dict) -> bool:
-        new_day = new_lecture["day"]
-        new_slots = {
-            new_lecture["start_hour"] + i for i in range(new_lecture["duration_hours"])
-        }
-
-        for lecture in self.data["lectures"]:
-            if lecture["day"] != new_day:
-                continue
-            existing_slots = {
-                lecture["start_hour"] + i for i in range(lecture["duration_hours"])
-            }
-            if new_slots & existing_slots:
-                return True
-        return False
+STYLE = """
+QMainWindow, QWidget {
+    background: #f4f7fb;
+    color: #1f2937;
+}
+QLabel#title {
+    font-size: 28px;
+    font-weight: 700;
+    padding: 8px 4px;
+}
+QLabel#header, QLabel#time {
+    background: #e8eef8;
+    border: 1px solid #d3deef;
+    border-radius: 10px;
+    padding: 10px;
+    font-weight: 600;
+}
+QFrame#EmptyCell {
+    background: #ffffff;
+    border: 1px solid #e4eaf4;
+    border-radius: 10px;
+}
+QFrame#SlotCell {
+    background: #fff8e7;
+    border: 1px solid #eeddb1;
+    border-radius: 12px;
+}
+QFrame#SlotCell[completed="true"] {
+    background: #daf5df;
+    border: 1px solid #b6e4bf;
+}
+QLabel#slotStatus {
+    color: #64748b;
+    font-weight: 700;
+}
+QPushButton {
+    background: #dbeafe;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-weight: 600;
+}
+QPushButton:hover {
+    background: #bfdbfe;
+}
+QLineEdit, QSpinBox, QComboBox {
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 6px;
+}
+"""
 
 
 def main() -> None:
-    root = tk.Tk()
-    app = LectureTrackerApp(root)
-    root.mainloop()
+    app = QApplication(sys.argv)
+    app.setLayoutDirection(Qt.RightToLeft)
+    app.setStyleSheet(STYLE)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
 
 
 if __name__ == "__main__":

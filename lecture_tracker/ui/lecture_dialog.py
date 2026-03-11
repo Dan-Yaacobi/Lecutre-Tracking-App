@@ -8,11 +8,11 @@ from PySide6.QtWidgets import (
     QFormLayout,
     QLineEdit,
     QMessageBox,
-    QSpinBox,
     QVBoxLayout,
 )
 
 DAYS = ["א", "ב", "ג", "ד", "ה"]
+TIME_OPTIONS = [f"{hour:02d}:00" for hour in range(8, 21)]
 
 
 class LectureDialog(QDialog):
@@ -28,24 +28,21 @@ class LectureDialog(QDialog):
         self.day_combo = QComboBox()
         self.day_combo.addItems(DAYS)
 
-        self.start_spin = QSpinBox()
-        self.start_spin.setMinimum(1)
-        self.start_spin.setMaximum(max_hours)
-        self.start_spin.setValue(1)
-        self.start_spin.setFixedWidth(80)
+        self.start_combo = QComboBox()
+        self.start_combo.addItems(TIME_OPTIONS)
+        self.start_combo.setFixedWidth(110)
 
-        self.duration_spin = QSpinBox()
-        self.duration_spin.setMinimum(1)
-        self.duration_spin.setMaximum(max_hours)
-        self.duration_spin.setValue(1)
-        self.duration_spin.setFixedWidth(80)
+        self.end_combo = QComboBox()
+        self.end_combo.addItems(TIME_OPTIONS)
+        self.end_combo.setCurrentIndex(1)
+        self.end_combo.setFixedWidth(110)
 
         form = QFormLayout()
         form.addRow("שם הקורס", self.course_input)
         form.addRow("כותרת ההרצאה (אופציונלי)", self.title_input)
         form.addRow("יום", self.day_combo)
-        form.addRow("שעת התחלה", self.start_spin)
-        form.addRow("משך (שעות אקדמיות)", self.duration_spin)
+        form.addRow("שעת התחלה", self.start_combo)
+        form.addRow("שעת סיום", self.end_combo)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel)
         buttons.accepted.connect(self._save)
@@ -65,16 +62,17 @@ class LectureDialog(QDialog):
             QMessageBox.warning(self, "שגיאה", "יש למלא שם קורס")
             return
 
-        start_hour = self.start_spin.value()
-        duration = self.duration_spin.value()
+        start_idx = self.start_combo.currentIndex()
+        end_idx = self.end_combo.currentIndex()
+        duration = end_idx - start_idx
 
-        if not isinstance(duration, int) or duration <= 0:
-            QMessageBox.warning(self, "שגיאה", "משך ההרצאה חייב להיות לפחות שעה אחת")
+        if duration <= 0:
+            QMessageBox.warning(self, "שגיאה", "שעת הסיום חייבת להיות אחרי שעת ההתחלה")
             return
 
-        max_hours = self.start_spin.maximum()
+        start_hour = start_idx + 1
         if start_hour + duration - 1 > max_hours:
-            QMessageBox.warning(self, "שגיאה", "משך ההרצאה חורג מטווח השעות")
+            QMessageBox.warning(self, "שגיאה", "שעת הסיום חייבת להיות אחרי שעת ההתחלה")
             return
 
         self.result_data = {
